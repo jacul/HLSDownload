@@ -1,14 +1,12 @@
+#!/bin/bash
+
 if [ -z $1 ] 
 then
     echo "usage: download-hls URL [name to save]"
     exit 1
 fi
 
-filename="save.ts"
-if [ -n $2 ]
-then
-    filename="$2.ts"
-fi
+filename=${2:-"save.ts"}
 
 if [ -f "$filename" ]
 then
