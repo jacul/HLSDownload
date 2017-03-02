@@ -6,7 +6,7 @@ then
     exit 1
 fi
 
-filename=${2:-"save.ts"}
+filename=${2:-"save"}.ts
 
 if [ -f "$filename" ]
 then
