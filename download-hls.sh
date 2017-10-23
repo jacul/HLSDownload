@@ -38,12 +38,13 @@ while read line; do
     fi
     
     if [[ $status == "reading" ]]
-    then
-		if [[ $line == */* ]] # if the Media Segment URI is an URL
+	then
+		if [[ $line == */* ]] # if the Media Segment URI is an absolute URL
 		then
 	        curl -s --show-error "${line}" >> "$filename"
-		else # is an URN, guess its url with safari's logic
-			curl -s --show-error "${path}/${line}" >> "$filename"
+		else # is a relative URL
+			curl -s --show-error "${path}/${line}" > "$line"
+			cat "$line" >> "$filename"
 		fi
         status="begin"
         echo "$count segment(s) downloaded..."
