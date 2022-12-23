@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z $1 ] 
+if [ -z $1 ]
 then
     echo "usage: download-hls URL [name to save]"
     exit 1
@@ -19,15 +19,15 @@ echo "Save file to $filename"
 status="begin"
 count=1
 url="$1"
-curl "$url" > temp.m3u8
-cat temp.m3u8 | \
+curl "$url" > $filename.m3u8
+cat $filename.m3u8 | \
 while read line; do
     if [[ $line == \#EXTINF* ]]
     then
         status="reading"
         continue
     fi
-    
+
     if [[ $status == "reading" ]]
     then
         curl -s --show-error "${line}" >> "$filename"
@@ -36,12 +36,12 @@ while read line; do
         let "count += 1"
         continue
     fi
-    
+
     if [[ $line == "#EXT-X-ENDLIST" ]]
     then
         status="done"
         echo "Download finished"
-        rm temp.m3u8
+        rm $filename.m3u8
         exit 0
     fi
 done
