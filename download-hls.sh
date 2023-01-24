@@ -19,6 +19,15 @@ echo "Save file to $filename"
 status="begin"
 count=1
 url="$1"
+
+if [[ $url =~ (.*)/[^/]* ]]
+then
+	path=${BASH_REMATCH[1]}
+else
+	echo "the URL arguments is error."
+	exit 1
+fi
+
 curl "$url" > temp.m3u8
 cat temp.m3u8 | \
 while read line; do
@@ -29,8 +38,14 @@ while read line; do
     fi
     
     if [[ $status == "reading" ]]
-    then
-        curl -s --show-error "${line}" >> "$filename"
+	then
+		if [[ $line == */* ]] # if the Media Segment URI is an absolute URL
+		then
+	        curl -s --show-error "${line}" >> "$filename"
+		else # is a relative URL
+			curl -s --show-error "${path}/${line}" > "$line"
+			cat "$line" >> "$filename"
+		fi
         status="begin"
         echo "$count segment(s) downloaded..."
         let "count += 1"
@@ -45,3 +60,4 @@ while read line; do
         exit 0
     fi
 done
+
